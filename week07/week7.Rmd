@@ -1,0 +1,18 @@
+---
+title: "week7"
+output: html_document
+---
+
+* Read Chapter 8 PDS
+* Watch [Graphing 1 Video](https://www.youtube.com/watch?v=7_b6Rd9Vad8&list=PLDEF0B9CBD27AD37E&index=54)
+* Work on **Univariate Graphing Assignment** page 46 PDS
+* **Univariate Graphing Assignment** see page 46 PDS due NLT 5 PM February 27.  Submit assignment
+via [http://www.crowdgrader.org](http://www.crowdgrader.org).  The direct link for the Research Plan Assignment is (Create the crowdgrader assignment and post here).
+
+### Watch ISLR videos: 
+
+- [Case-Control Sampling and Multiclass Logistic Regression (7:28)](https://www.youtube.com/watch?v=GavRXXEHGqU)
+- [Linear Discriminant Analysis and Bayes Theorem (7:12) ](https://www.youtube.com/watch?v=RfrGiG1Hm3M)
+- [Univariate Linear Discriminant Analysis (7:37)](https://www.youtube.com/watch?v=QG0pVJXT6EU)
+- [Multivariate Linear Discriminant Analysis and ROC Curves (17:42)](https://www.youtube.com/watch?v=X4VDZDp2vqw)
+   
