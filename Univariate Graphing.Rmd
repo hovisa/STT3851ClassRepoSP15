@@ -1,0 +1,163 @@
+---
+title: "Univariate Graphing/Data Management"
+output: html_document
+---
+
+###Purpose of Study:
+The study will evaluate teens who do work more than twenty hours a week will more than likely fall behind in school and be afflicted by substance abuse. If the amount of hours are hurting their academic career, they would have to drop the hours they work or obtain a GED if left with no choice. And if the amount of hours the student works also influence how much alcohol they consume, they would have to go to counseling.
+
+###Variables
+
+The variables that are used for this are the amount of hours a student works during the school year for pay (`work`), the amount of alcohol a student has consumed over the past year (`alcohol`), if consuming alcohol affected their school work (`trouble`), and the student's grades in mathematics (`math`) and language arts (`english`). The reason I chose to focus on these two grades is that english and mathematics are the main focus for the SATs, which determines how well a student uses their studying and thinking skills that would be required for college-leveled work.
+
+###Data Management
+
+```{r}
+library(dplyr)
+library(PDS)
+```
+
+```{r}
+AddHealthT <- tbl_df(AddHealth)
+health <- AddHealthT %>%
+  rename(english = H1ED11, math = H1ED12, work = H1EE4, alcohol = H1TO15, trouble = H1TO21) %>%
+  select(english)
+head(health)
+summary(health)
+```
+
+
+###Cleaning Data
+
+The data of how many hours a teenager works during the school year is messy when looking at the hours itself, it was more beneficial make intervals for the hours a student works. So the intervals are from 0-10 hours, 10-20 hours, 20-30 hours, 30-40 hours, and everything else above 40. We left out those who didn't know how many hours they worked or legitimately skipped the question.
+```{r}
+health$work[health$work==999]<-NA
+health$work[health$work==998]<-NA
+health$work[health$work==996]<-NA
+health$workFac <- cut(health$work, breaks=c(0, 10, 20, 30, 40, 140), include.lowest = TRUE)
+health$workFac<-factor(health$workFac,labels=c("0-10 hours", "10-20 hours","20-30 hours","30-40 hours","40+ hours"))[,drop=TRUE]
+
+```
+
+For the mathematics and english data, we focused on students who took the course and was graded on a letter scale and those who did not take the course. 
+
+```{r}
+health$math[health$math==6]<-NA
+health$math[health$math==96]<-NA
+health$math[health$math==97]<-NA
+health$math[health$math==98]<-NA
+health$math<-factor(health$math,labels=c("A","B", "C","D or lower","Didn't take course"))[,drop=TRUE]
+
+
+health$english[health$english==6]<-NA
+health$english[health$english==96]<-NA
+health$english[health$english==97]<-NA
+health$english[health$english==98]<-NA
+health$english<-factor(health$english,labels=c("A","B","C","D or lower","Didn't take course"))[,drop=TRUE]
+```
+
+For the alcohol data, we took out the data of those that refused to answer, 
+or they replied N/A. Those who did legitimatley skip that question haven't drank alcohol in the past 12 months or never had a drink.
+```{r}
+health$alcohol[health$alcohol==7]<-NA
+health$alcohol[health$alcohol==96]<-NA
+health$alcohol[health$alcohol==98]<-NA
+health$alcohol<-factor(health$alcohol,labels=c("Almost/Everyday","3-5 days/week", "1-2 days/week","2-3 days/month","once a month or less","1 or 2 days in past year","Never"))[,drop=TRUE]
+
+health$trouble[health$trouble==6]<-NA
+health$trouble[health$trouble==9]<-NA
+health$trouble<-factor(health$trouble,labels=c("Never","Once","Twice","3-4 Times","5 or more times","Clean for past year"))[,drop=TRUE]
+```
+
+
+###Creating Tables
+
+```{r}
+xtabs(~workFac,data=health)
+
+xtabs(~math,data=health)
+
+xtabs(~english,data=health)
+
+xtabs(~alcohol,data=health)
+
+xtabs(~alcohol,data=health)
+```
+
+
+
+###Frequency Tables
+
+```{r}
+library(ggplot2)
+ggplot(data = health, aes(x = workFac)) + 
+  geom_bar(fill="lightblue")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How many hours do you work per week")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+For this bar graph, this is how many hours students typically work during a school week. Many students work 0-10 hours. It is skewed extremely to the right.
+
+
+```{r}
+ggplot(data=health,aes(x=math))+
+  geom_bar(fill="firebrick")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How well did you do in math")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+For this bar graph, it is unimodal with a right skew. Aside from B, the most common grade for mathematics is a tie between A and C.
+
+
+```{r}
+ggplot(data=health,aes(x=english))+
+  geom_bar(fill="darkgreen")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How well did you do in english")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+For this bar graph, it is bimodal and skewed right. Even though it slightly increases at the right end where there were non-applicable answers, it seems that most students are making a B in english.
+
+There also does seem to be a relationship to the grades.
+```{r}
+grades<-table(health$math,health$english)
+barplot(grades,beside=TRUE,col=c("firebrick","lightblue","darkgreen","purple3","orange"),legend=TRUE)
+
+```
+
+As shown by this bar graph, it seems that if a student does well in math, then he or she does well in english.
+
+```{r}
+ggplot(data=health,aes(x=alcohol))+
+  geom_bar(fill="orange")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How often do you drink alcohol")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+According to this bar graph, it seems to be skewed right and unimodal. Many students never drank alcohol.
+
+```{r}
+ggplot(data=health,aes(x=trouble))+
+  geom_bar(fill="pink")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="Did alcohol ever give you problems with school?")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+According to this bar graph, it is bimodal and evenly distributed. However, the modals are those whose alcohol consumption never interfered his/her school work or they haven't drank during the past year.
+
+This is a density plot of the amount of hours a teenager works during a school week.
+```{r}
+ggplot(data=health,aes(x=work))+
+  geom_density(fill="gray")+
+  theme_bw()+
+  labs(x="Hours Worked per Week")
+mean(health$work,na.rm=T)
+sd(health$work,na.rm=T)
+median(health$work,na.rm=T)
+```
+
+Since the graph is extremely skewed to the right, then we would use the median to describe the center, which is `r median(health$work,na.rm=TRUE)`. The spread of the graph is the standard deviation, which is `r sd(health$work,na.rm=T)`. Even though the graph is multimodal, the main focus of this graph is where x=0. Many students don't work outside of school and it rapdily declines until levels out to zero.

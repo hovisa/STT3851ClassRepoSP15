@@ -1,0 +1,26 @@
+---
+title: "Citation Assignment"
+author: "Anna Hovis"
+date: "Friday, January 30, 2015"
+output: html_document
+bibliography: StatResources.bib
+---
+
+For my project, I am looking at teenage employment has a positive or negative effect.
+
+@kalenkoski_time_2012 shows that those who do work do have better time mangaement skills.
+
+@mortimer_benefits_2010 does speak of the positives and negatives of teen employment. That even substance use increases with the hours, it also does teach them about the responsibilities when becoming an adult.
+
+@laberge_risk_2011 shows that those in the job force at high school age suffer more physically and emotionally than those that are older and in the work force.
+
+@monahan_revisiting_2011 says that despite whether a student works moderate to intense hours, there seems to be no change in the student's gpa.
+
+@staff_adolescent_2010 shows that those who either work intensively perform poorly in school.
+
+Based on what I have read, I hypothesize that the intensity of the work hours influence a student's academic career and personal health.
+
+# References
+
+
+

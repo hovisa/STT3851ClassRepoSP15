@@ -1,0 +1,69 @@
+---
+title: "Education w/Employment"
+author: "Anna Hovis"
+date: "Thursday, February 05, 2015"
+output: html_document
+---
+```{r}
+knitr::opts_chunk$set(comment = NA, message = FALSE, warning = FALSE, fig.align = "center")
+library(dplyr)
+library(ggplot2)
+```
+
+
+```{r}
+library(WDI)
+library(PDS)
+WDIsearch("Primary Completion Rate")
+WDIsearch("Employment")
+MOJ <- WDI(country = "all", indicator = c("SE.PRM.CMPT.ZS","SL.EMP.1524.SP.MA.ZS"),
+    start = 2010, end = 2010, extra = FALSE, cache = NULL)
+head(MOJ)
+tail(MOJ)
+dim(MOJ)
+dim(gapminder)
+MOJcom <- inner_join(x = gapminder, y = MOJ)
+dim(MOJcom)
+MOJsom <- MOJcom %>%
+  select(-contains("year")) %>%
+  rename(School = SE.PRM.CMPT.ZS, TeenRate = SL.EMP.1524.SP.MA.ZS)
+head(MOJsom)
+MOJleft <- left_join(x = gapminder, y = MOJ)
+dim(MOJleft)
+head(MOJleft)
+MOJleft <- MOJleft %>%
+  select(-contains("year")) %>%
+  rename(School=SE.PRM.CMPT.ZS TeenRate = SL.EMP.1524.SP.ZS,)
+head(MOJleft)
+```
+
+```{r}
+MOJO <- WDI(country = "all", indicator = c("SE.PRM.CMPT.ZS","SL.EMP.1524.SP.ZS"),
+    start = 1900, end = 2015, extra = FALSE, cache = NULL)
+head(MOJO)
+tail(MOJO)
+ggplot(data = MOJO, aes(x = year, y = SL.EMP.1524.SP.ZS, color = country)) + 
+  geom_point(alpha = 0.8) + 
+  theme_bw() + 
+  guides(color = FALSE) + 
+  labs(y = "Teen Employment Rate",)
+```
+
+```{r}
+MOJOusa <- subset(MOJO, country == "North America")
+ggplot(data = MOJOusa, aes(x = year , y = SL.EMP.1524.SP.ZS)) + 
+  geom_point(alpha = 0.8) + 
+  theme_bw() + 
+  guides(color = FALSE) + 
+  labs(y = "Teen Employment Rate")
+```
+
+```{r}
+MOJOmini <- MOJO %>%
+  filter(country == c("China", "United States", "Spain"))
+head(MOJOmini)
+ggplot(data = MOJOmini, aes(x = year, y = SL.EMP.1524.SP.ZS, color = country)) + 
+  geom_point(alpha = 0.8) + 
+  theme_bw() + 
+  labs(y = "Teen Employment Rate")
+```

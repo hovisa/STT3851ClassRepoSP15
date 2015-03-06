@@ -1,0 +1,213 @@
+---
+title: "Bivariative and Multivariate Graphing/Data Management"
+date: "Thursday, March 05, 2015"
+output: html_document
+---
+
+###Purpose of Study:
+The study will evaluate teens who do work more than twenty hours a week will more than likely fall behind in school and be afflicted by substance abuse. If the amount of hours are hurting their academic career, they would have to drop the hours they work or obtain a GED if left with no choice. And if the amount of hours the student works also influence how much alcohol they consume, they would have to go to counseling.
+
+###Variables
+
+The variables that are used for this are the amount of hours a student works during the school year for pay (`work`), whether a student has drank a beer, wine, or liqour more than two or three times in their lifetime (`alcohol`), if consuming alcohol affected their school work (`trouble`), whether a student has received out of school suspension (`suspension`) and the student's grades in mathematics (`math`) and language arts (`english`). The reason I chose to focus on these two grades is that english and mathematics are the main focus for the SATs, which determines how well a student uses their studying and thinking skills that would be required for college-leveled work. And the reason I use `alcohol` is because if a teenager were to drink more than two or three alcoholic beverage in their lifetime, it is safe to assume that the teenager would develop some sort of dependency on it.
+
+###Data Management
+
+```{r}
+library(dplyr)
+library(PDS)
+```
+
+```{r}
+AddHealthT <- tbl_df(AddHealth)
+health <- AddHealthT %>%
+  rename(english = H1ED11, math = H1ED12, work = H1EE4, alcohol = H1TO12, trouble = H1TO21, suspension = H1ED7) %>%
+  select(english,math,work,alcohol,trouble,suspension)
+head(health)
+summary(health)
+```
+
+
+###Cleaning Data
+
+The data of how many hours a teenager works during the school year is messy when looking at the hours itself, it was more beneficial make intervals for the hours a student works. So the intervals are from 0-10 hours, 10-20 hours, 20-30 hours, 30-40 hours, and everything else above 40. We left out those who didn't know how many hours they worked or legitimately skipped the question.
+```{r}
+health$work[health$work==999]<-NA
+health$work[health$work==998]<-NA
+health$work[health$work==996]<-NA
+health$workFac <- cut(health$work, breaks=c(0, 10, 20, 30, 40, 140), include.lowest = TRUE)
+health$workFac<-factor(health$workFac,labels=c("0-10 hours", "10-20 hours","20-30 hours","30-40 hours","40+ hours"))[,drop=TRUE]
+
+```
+
+For the mathematics and english data, we focused on students who took the course and was graded on a letter scale and those who did not take the course. 
+
+```{r}
+health$math[health$math==6]<-NA
+health$math[health$math==96]<-NA
+health$math[health$math==97]<-NA
+health$math[health$math==98]<-NA
+health$math<-factor(health$math,labels=c("A","B", "C","D or lower","Didn't take course"))[,drop=TRUE]
+
+
+health$english[health$english==6]<-NA
+health$english[health$english==96]<-NA
+health$english[health$english==97]<-NA
+health$english[health$english==98]<-NA
+health$english<-factor(health$english,labels=c("A","B","C","D or lower","Didn't take course"))[,drop=TRUE]
+```
+
+For the alcohol data, we took out the data of those that refused to answer, 
+or they replied N/A. Those who did legitimatley skip that question haven't drank alcohol in the past 12 months or never had a drink.
+
+```{r}
+health$alcohol[health$alcohol==6]<-NA
+health$alcohol[health$alcohol==8]<-NA
+health$alcohol[health$alcohol==9]<-NA
+health$alcohol<-factor(health$alcohol,labels=c("no","yes"))[,drop=TRUE]
+
+health$trouble[health$trouble==6]<-NA
+health$trouble[health$trouble==9]<-NA
+health$trouble<-factor(health$trouble,labels=c("Never","Once","Twice","3-4 Times","5 or more times","Clean for past year"))[,drop=TRUE]
+```
+
+For the suspension data, we took out those who refused to answer the question and who didn't know if they received out of school suspension.
+
+```{r}
+health$suspension[health$suspension==6]<-NA
+health$suspension[health$suspension==8]<-NA
+health$suspension<-factor(health$suspension,label=c("no","yes"))[,drop=TRUE]
+```
+
+###Creating Tables
+
+```{r}
+xtabs(~workFac,data=health)
+
+xtabs(~math,data=health)
+
+xtabs(~english,data=health)
+
+xtabs(~alcohol,data=health)
+
+xtabs(~trouble,data=health)
+
+xtabs(~suspension,data=health)
+```
+
+
+
+###Frequency Tables
+
+```{r}
+library(ggplot2)
+ggplot(data = na.omit(health), aes(x = workFac)) + 
+  geom_bar(fill="lightblue")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How many hours do you work per week")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+For this bar graph, this is how many hours students typically work during a school week. Many students work 0-10 hours. It is skewed extremely to the right.
+
+
+```{r}
+ggplot(data=na.omit(health),aes(x=math))+
+  geom_bar(fill="firebrick")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How well did you do in math")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+For this bar graph, it is unimodal with a right skew. Aside from B, the most common grade for mathematics is a tie between A and C.
+
+
+```{r}
+ggplot(data=na.omit(health),aes(x=english))+
+  geom_bar(fill="darkgreen")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How well did you do in english")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+For this bar graph, it is unimodal and skewed right. According to this graph, the highest grade in english is a B, and the next highest grade is an A.
+
+There also does seem to be a relationship to the grades.
+```{r}
+grades<-table(health$math,health$english)
+barplot(grades,beside=TRUE,col=c("firebrick","lightblue","darkgreen","purple3","orange"),legend=TRUE)
+
+```
+
+As shown by this bar graph, it seems that if a student does well in math, then he or she does well in english.
+
+```{r}
+ggplot(data=na.omit(health),aes(x=alcohol))+
+  geom_bar(fill="orange")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="Have you drank alcohol more than two or three\n times in your life")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+According to this bar graph, it seems to be skewed left and unimodal. Many students never drank alcohol.
+
+```{r}
+ggplot(data=na.omit(health),aes(x=trouble))+
+  geom_bar(fill="pink")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="Did alcohol ever give you problems with school?")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+According to this bar graph, it is bimodal and evenly distributed. However, the modals are those whose alcohol consumption never interfered his/her school work or they haven't drank during the past year.
+
+
+```{r}
+ggplot(data=na.omit(health),aes(x=suspension))+
+  geom_bar(fill="turquoise")+
+  theme_bw()+
+  labs(x="",y="Total Number",title="Have you received out of school suspension?")
+```
+
+According to this bar graph, it would be skewed right and unimodal. It seems that most students never received out of school suspension.
+
+###Univariate Graph
+
+This is a density plot of the amount of hours a teenager works during a school week.
+```{r}
+ggplot(data=health,aes(x=work))+
+  geom_density(fill="gray")+
+  theme_bw()+
+  labs(x="Hours Worked per Week")
+
+IQR(health$work,na.rm=T)
+median(health$work,na.rm=T)
+```
+
+Since the graph is extremely skewed to the right, then we would use the median to describe the center, which is `r median(health$work,na.rm=TRUE)`. The spread of the graph is the standard deviation, which is `r IQR(health$work,na.rm=T)`. Even though the graph is multimodal, the main focus of this graph is where x=0. Many students don't work outside of school and it rapdily declines until levels out to zero.
+
+
+
+###Multivariative Graph
+
+
+
+
+```{r}
+ggplot(data=na.omit(health),aes(x=alcohol,fill=suspension))+
+  geom_bar(position="fill")+
+  theme_bw()+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))+
+  labs(x="",y="",title="Fraction of if a student consumed alcohol compared\n to if they received out of school suspension")+
+  scale_fill_discrete(name="Was the student suspended")
+```
+
+By comparing whether a student has drank alcohol as a beverage more than two or three times in their lifetime with whether a student had out of school suspension or not, we see a correlation. Those who haven't drank alcohol more than two times have received suspension less often than those who have drank alcohol more than twice. This shows that alcohol does have an affect on a student's behavior.
+
+
+```{r}
+ggplot(data=na.omit(health),aes(x=workFac,fill=suspension)) +
+  geom_bar(postion="fill") +
+  theme_bw()
+  
+```

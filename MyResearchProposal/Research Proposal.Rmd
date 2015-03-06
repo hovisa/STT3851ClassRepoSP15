@@ -1,0 +1,40 @@
+---
+title: "Research Proposal"
+author: 
+date: "Thursday, February 05, 2015"
+output: html_document
+bibliography: StatResources.bib
+---
+
+#Introduction
+
+When I was in high school, I was relieved and embarrased that I didn't have a job. I didn't get a job until my second semester in college. After three different jobs, each one increasing in work hours, I've personally became more stressed about whether I can maintain a steady income and earn good grades to obtain a degree to get a better job. I wanted to see if having employment during high school age would be a positive or negative effect on students. By searchinig for articles by using the key words, 'teenage employment', 'adolescent employment', and 'adolescent jobs', this is what I've found:
+
+@kalenkoski_time_2012 shows that those who do work during school days spend less time doing homework than those who don't work, which would bring their grades down. 
+
+@mortimer_benefits_2010 does speak of the positives and negatives of teen employment. Even though it does teach responsibility to teenagers, if they work too many hours, it can negatively influece their grades, and can possibly engage in problematic behavior.
+
+@laberge_risk_2011 shows that those in the job force at high school age suffer more physically and emotionally than those that are older and in the work force. They suffer more from sleep deprivation, poorer health, and fatigue.
+
+@monahan_revisiting_2011 says that students who work twenty or more hours a week are less engaged in school activity and tend to exhibit problematic behavior. Those who work less than twenty hours a week doesn't seem to affect their academic career or hteir heatlh.
+
+@staff_adolescent_2010 shows that those who either work intensively perform poorly in school.
+
+This leads to my hypothesis that teenagers who work long hours (20+) are more than likely to fall behind in school and become more prone to substance abuse.
+
+#Method:
+
+##Sample
+The sample came from Add Health, which has many information on students between the grades of 7th and 12th. These sample came specifically from the Wave I codebook and has 15,356 participants
+
+##Procedure
+A total of 132 schools were included in the the Add Health Wave I sample. An administrator from each school was asked to complete a questionare. Te response rate among administrators was 98.5%
+
+
+##Measures
+The teen employment rate has been matched with teenagers who finished their primary education. The information has been given from the year 2007. It is shown that the more teenagers are employed, the less likely they are to complete school; as the completion rate increased over time, the employment rate decreased. 
+
+##Implication
+The study will evaluate teens who do work more than twenty hours a week will more than likely fall behind in school and be afflicted by substance abuse. If the amount of hours are hurting their academic career, they would have to drop the hours they work or obtain a GED if left with no choice. And if the amount of hours the student works also influence how much alcohol they consume, they would have to go to counseling.
+
+#References

@@ -1,0 +1,97 @@
+---
+title: "Data Management"
+output: html_document
+---
+
+##Purpose of Study:
+The study will evaluate teens who do work more than twenty hours a week will more than likely fall behind in school and be afflicted by substance abuse. If the amount of hours are hurting their academic career, they would have to drop the hours they work or obtain a GED if left with no choice. And if the amount of hours the student works also influence how much alcohol they consume, they would have to go to counseling.
+
+##Variables
+
+The variables that I have used for this are the amount of hours a student works during the school year for pay, the amount of alcohol a student has consumed over the past year, and how often a student completes his/her daily homework.
+
+##Data Management
+
+```{r}
+library(dplyr)
+library(PDS)
+```
+
+```{r}
+AddHealthtbl<-tbl_df(AddHealth)
+health <- AddHealth %>%
+  rename(homework=H1ED17,alcohol=H1TO15,work=H1EE4) %>%
+  select(homework,alcohol,work)
+head(health)
+summary(health)
+```
+
+
+##Cleaning Data
+
+Since the data for this is messy when looking at the hours itself, it was more beneficial make intervals for the hours a student works. So the intervals are from 0-10 hours, 10-20 hours, 20-30 hours, 30-40 hours, and everything else above 40.
+```{r}
+health$work[health$work==999]<-NA
+health$work[health$work==998]<-NA
+health$work[health$work==996]<-NA
+health$workFac <- cut(health$work, breaks=c(0, 10, 20, 30, 40, 140), include.lowest = TRUE)
+health$workFac<-factor(health$workFac,labels=c("0-10 hours", "10-20 hours","20-30 hours","30-40 hours","40+ hours"))[,drop=TRUE]
+
+
+health$alcohol[health$alcohol==7]<-NA
+health$alcohol[health$alcohol==96]<-NA
+health$alcohol[health$alcohol==98]<-NA
+health$alcohol<-factor(health$alcohol,labels=c("Almost/Everyday","3-5 days/week", "1-2 days/week","2-3 days/month","once a month or less","1 or 2 days in past year","Never"))[,drop=TRUE]
+
+
+health$homework[health$homework==6]<-NA
+health$homework[health$homework==7]<-NA
+health$homework[health$homework==8]<-NA
+health$homework<-factor(health$homework,labels=c("Never","Just A Few Times","About Once a Week","Almost Everyday","Everyday"))[,drop=TRUE]
+
+```
+
+#Creating Tables
+
+```{r}
+xtabs(~workFac,data=health)
+
+xtabs(~alcohol,data=health)
+
+xtabs(~homework,data=health)
+
+```
+
+
+
+##Frequency Tables
+
+```{r}
+library(ggplot2)
+ggplot(data = health, aes(x = workFac)) + 
+  geom_bar() +
+  labs(x="",y="Total Number",title="How many hours a week do you work?")+
+  theme_bw()
+```
+
+The majority of the students work zero to ten hours a week. There are very few students that work full time or longer.
+
+```{r}
+ggplot(data=health,aes(x=alcohol))+
+  geom_bar()+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How often do you consume alcohol?")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+Many of the students never drank alcohol. Not many of the students seem to be dependent on it. 
+
+```{r}
+ggplot(data=health,aes(x=homework))+
+  geom_bar()+
+  theme_bw()+
+  labs(x="",y="Total Number",title="How often do you do your homework?")+
+  theme(axis.text.x=element_text(angle=70,vjust=0.5))
+```
+
+There seems to be a right skew of the students who do their homework often. Surprisingly, not as many students as I assumed did their homework often.
